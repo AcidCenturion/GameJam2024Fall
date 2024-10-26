@@ -22,6 +22,12 @@ public class PlayerControls : MonoBehaviour
         {
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
         }
+
+        //downward movement
+        if(Input.GetKeyDown(KeyCode.S))
+        {
+            rb.AddForce(transform.up * (-1) * jumpForce, ForceMode2D.Impulse);
+        }
     }
 
     //detect water
@@ -29,7 +35,14 @@ public class PlayerControls : MonoBehaviour
     {
         if(collision.gameObject.tag == "Water")
         {
-            
+            rb.gravityScale *= -1;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Water")
+        {
+            rb.gravityScale *= -1;
         }
     }
 }
