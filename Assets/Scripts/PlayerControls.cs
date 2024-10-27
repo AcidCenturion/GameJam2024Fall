@@ -30,16 +30,30 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
-    //detect water
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //detect water
+        //reverse gravity when in the water to simulate buoyancy
         if(collision.gameObject.tag == "Water")
         {
             rb.gravityScale *= -1;
         }
+
+
+        //detect iceberg
+        if(collision.gameObject.tag == "Obstacle")
+        {
+            //TODO vvv dummy code before game over implementation
+            rb.AddForce(transform.right * 10, ForceMode2D.Impulse);
+        }
     }
+
+
     private void OnTriggerExit2D(Collider2D collision)
     {
+        //detect water
+        //flip the gravity back when exiting the water
         if(collision.gameObject.tag == "Water")
         {
             rb.gravityScale *= -1;
