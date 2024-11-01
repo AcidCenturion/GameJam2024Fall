@@ -4,28 +4,40 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
-    Rigidbody2D rb;
+    private Rigidbody2D rb;
 
-    [SerializeField] float jumpForce;
+    [SerializeField] private float jumpForce;
+
+    private bool isSubmerged;
+
+    private GameObject camera;
+
+    private AudioSource[] sfx;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+
+        camera = GameObject.Find("Main Camera");
+
+        sfx = gameObject.GetComponents<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
         //upward movement
-        if(Input.GetKeyDown(KeyCode.W))
+        if(Input.GetKeyDown(KeyCode.W) && !isSubmerged)
         {
+            sfx[0].Play();
             rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
         }
 
         //downward movement
-        if(Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKeyDown(KeyCode.S) && isSubmerged)
         {
+            sfx[1].Play();
             rb.AddForce(transform.up * (-1) * jumpForce, ForceMode2D.Impulse);
         }
     }
@@ -38,6 +50,7 @@ public class PlayerControls : MonoBehaviour
         if(collision.gameObject.tag == "Water")
         {
             rb.gravityScale *= -1;
+            isSubmerged = true;
         }
 
 
@@ -45,7 +58,11 @@ public class PlayerControls : MonoBehaviour
         if(collision.gameObject.tag == "Obstacle")
         {
             //TODO vvv dummy code before game over implementation
-            rb.AddForce(transform.right * 10, ForceMode2D.Impulse);
+            transform.Translate(Vector2.right * 100);
+
+            var videoPlayer = camera.AddComponent<UnityEngine.Video.VideoPlayer>();
+            videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.CameraNearPlane;
+            videoPlayer.url = "Assets/Videos/Jumpscare_penguin.mp4";
         }
     }
 
@@ -57,6 +74,7 @@ public class PlayerControls : MonoBehaviour
         if(collision.gameObject.tag == "Water")
         {
             rb.gravityScale *= -1;
+            isSubmerged = false;
         }
     }
 }
